@@ -142,15 +142,19 @@ public class ModelProxy implements ViewListener {
                             modelListener.changeTurn();
                             break;
                         case 'L':
-                            name = in.readUTF();
-                            modelListener.lose(name);
+                            modelListener.lose();
                             break;
                         case 'W':
                             modelListener.win();
                             break;
                         case 'Q':
                             modelListener.quit();
+                            in.close();
+                            out.close();
                             break;
+                        case 'I':
+                            name = in.readUTF();
+                            modelListener.start(name);
                         default:
                             System.out.println("Bad Message");
                             break;

@@ -110,12 +110,10 @@ public class ViewProxy implements ModelListener{
 
     /**
      * Tells the client who they lost to
-     * @param name : name of person who won
      */
-    public void lose(String name){
+    public void lose(){
         try{
             out.write('L');
-            out.writeUTF(name);
             out.flush();
         }catch(IOException e){
             System.out.println("Printer Error");
@@ -142,6 +140,20 @@ public class ViewProxy implements ModelListener{
     public void quit(){
         try{
             out.write('Q');
+            out.flush();
+            out.close();
+            in.close();
+        }catch(IOException e){
+            System.out.println("Printer Error");
+            System.exit(1);
+        }
+    }
+
+    @Override
+    public void start(String name) {
+        try{
+            out.write('I');
+            out.writeUTF(name);
             out.flush();
         }catch(IOException e){
             System.out.println("Printer Error");
@@ -185,8 +197,6 @@ public class ViewProxy implements ModelListener{
                     }
                 }
             }catch(IOException e){
-                System.out.println("Error reading message");
-                System.exit(1);
             }finally {
                 try{
                     socket.close();

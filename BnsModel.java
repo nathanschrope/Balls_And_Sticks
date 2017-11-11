@@ -49,6 +49,7 @@ public class BnsModel implements ViewListener{
         names.add(name);
         numberOfClients++;
         if(numberOfClients == 2){
+            start();
             newBoard();
         }
 
@@ -168,8 +169,6 @@ public class BnsModel implements ViewListener{
     }
 
     /**
-     * does not need to do anything in this class
-     * shouldn't be called
      * @param name : player name
      * @param proxy : client
      */
@@ -183,6 +182,7 @@ public class BnsModel implements ViewListener{
         for(ModelListener temp: listeners){
             temp.quit();
         }
+        listeners.clear();
 
     }
 
@@ -202,11 +202,16 @@ public class BnsModel implements ViewListener{
         if(ballsLeft == 0){
             if(first){
                 listeners.get(1).win();
-                listeners.get(0).lose(names.get(0));
+                listeners.get(0).lose();
             }else{
                 listeners.get(0).win();
-                listeners.get(1).lose(names.get(1));
+                listeners.get(1).lose();
             }
         }
+    }
+
+    private void start(){
+        listeners.get(0).start(names.get(1));
+        listeners.get(1).start(names.get(0));
     }
 }

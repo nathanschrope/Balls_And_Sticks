@@ -16,9 +16,8 @@ public interface ModelListener extends BoardListener{
 
     /**
      * Sets Game over message to the other player winning
-     * @param name : players name that won
      */
-    public void lose(String name);
+    public void lose();
 
     /**
      * Sets Game over message to this player winning
@@ -30,4 +29,5 @@ public interface ModelListener extends BoardListener{
      */
     public void quit();
 
+    public void start(String name);
 }

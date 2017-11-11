@@ -37,6 +37,7 @@ public class BnsUI
     //Nathan Schrope added
     //represents if it is their turn or not.
     private Boolean turn = false;
+    private String otherPlayer;
 
 // Hidden constructors.
 
@@ -73,7 +74,6 @@ public class BnsUI
         frame.pack();
         frame.setVisible (true);
         //Nathan Schrope added
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -126,6 +126,9 @@ public class BnsUI
         this.turn = turn;
         if(turn){
             board.setBoardListener(viewListener);
+            messageField.setText("Your turn");
+        }else{
+            messageField.setText(otherPlayer + "'s turn");
         }
         newGameButton.addActionListener(new ActionListener() {
             @Override
@@ -133,7 +136,6 @@ public class BnsUI
                 viewListener.newBoard();
             }
         });
-        messageField.setText("");
     }
 
     /**
@@ -141,15 +143,20 @@ public class BnsUI
      */
     public void quit(){
         frame.dispose();
+        System.exit(0);
+    }
+
+    @Override
+    public void start(String name) {
+        otherPlayer = name;
     }
 
     /**
      * Sets text on screen to other player winning
-     * @param name : player that won's name
      */
     @Override
-    public void lose(String name) {
-        messageField.setText(name + " wins!");
+    public void lose() {
+        messageField.setText(otherPlayer + " wins!");
     }
 
     /**
@@ -212,8 +219,10 @@ public class BnsUI
         turn = !turn;
         if(turn){
             board.setBoardListener(viewListener);
+            messageField.setText("Your turn");
         }else{
             board.setBoardListener(null);
+            messageField.setText(otherPlayer + " turn");
         }
     }
 }
