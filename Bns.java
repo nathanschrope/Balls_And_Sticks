@@ -5,7 +5,7 @@ import java.net.Socket;
 /**
  * Start a client in the Balls and Sticks game
  */
-public class Client
+public class Bns
 {
 
     /**
