@@ -3,6 +3,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * Sends messages to and receives messages form the Server. Messages received change Client view
+ */
 public class ModelProxy implements ViewListener {
 
     private Socket socket;
@@ -10,6 +13,10 @@ public class ModelProxy implements ViewListener {
     private DataInputStream in;
     private ModelListener modelListener;
 
+    /**
+     * Only Constructor
+     * @param socket : socket to connect to
+     */
     public ModelProxy(Socket socket) {
         try {
             this.socket = socket;
@@ -22,11 +29,19 @@ public class ModelProxy implements ViewListener {
         }
     }
 
+    /**
+     * Sets the board listener
+     * @param bl : board listener to be change to
+     */
     public void setBoardListener(ModelListener bl){
         this.modelListener = bl;
         new ReaderThread() .start();
     }
 
+    /**
+     * Sends a message to the server that a stick was clicked
+     * @param x : stick number
+     */
     @Override
     public void stickClicked(int x) {
         try{
@@ -39,6 +54,10 @@ public class ModelProxy implements ViewListener {
         }
     }
 
+    /**
+     * Sends a message to the server saying a ball was clicked
+     * @param x : ball number
+     */
     @Override
     public void ballClicked(int x) {
         try{
@@ -51,6 +70,9 @@ public class ModelProxy implements ViewListener {
         }
     }
 
+    /**
+     * Sends the server a message to reset the board
+     */
     @Override
     public void newBoard() {
         try{
@@ -62,6 +84,11 @@ public class ModelProxy implements ViewListener {
         }
     }
 
+    /**
+     * sends message to join
+     * @param name : player name
+     * @param proxy : client
+     */
     @Override
     public void join(String name, ViewProxy proxy) {
         try {
@@ -73,6 +100,9 @@ public class ModelProxy implements ViewListener {
         }
     }
 
+    /**
+     * Sends a message to the server to end game
+     */
     @Override
     public void quit() {
         try {
@@ -83,6 +113,9 @@ public class ModelProxy implements ViewListener {
         }
     }
 
+    /**
+     * Reads in the input from the server
+     */
     private class ReaderThread extends Thread{
         @Override
         public void run() {
@@ -124,6 +157,8 @@ public class ModelProxy implements ViewListener {
                     }
                 }
             }catch(IOException e){
+                System.out.println("Reader Error");
+                System.exit(1);
             }
         }
     }

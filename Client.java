@@ -2,6 +2,9 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+/**
+ * Start a client in the Balls and Sticks game
+ */
 public class Client
 {
 
@@ -34,7 +37,7 @@ public class Client
      */
     private static void usage()
     {
-        System.err.println ("Usage: java GoClient <host> <port>");
+        System.err.println ("Usage: java Client <host> <port> <name>");
         System.exit (1);
     }
 

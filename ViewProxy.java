@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
+/**
+ * View Proxy for the Server to send and receive messages from client
+ */
 public class ViewProxy implements ModelListener{
 
     private Socket socket;
@@ -11,6 +14,10 @@ public class ViewProxy implements ModelListener{
     private DataInputStream in;
     private ViewListener viewListener;
 
+    /**
+     * Only Constructor
+     * @param socket : socket to connect to
+     */
     public ViewProxy(Socket socket) {
         this.socket = socket;
         try {
@@ -26,6 +33,10 @@ public class ViewProxy implements ModelListener{
         }
     }
 
+    /**
+     * Sets the view Listener. Starts a new thread if it has not already
+     * @param vl : viewlistener to be change to
+     */
     public void setViewListener(ViewListener vl){
         if(this.viewListener == null){
             this.viewListener = vl;
@@ -35,7 +46,10 @@ public class ViewProxy implements ModelListener{
         }
     }
 
-
+    /**
+     * Tells the client to remove stick
+     * @param  i  Stick index (0..11).
+     */
     @Override
     public void stickClicked(int i) {
         try {
@@ -48,6 +62,10 @@ public class ViewProxy implements ModelListener{
         }
     }
 
+    /**
+     * Tells client to remove ball
+     * @param  i  Ball index (0..8).
+     */
     @Override
     public void ballClicked(int i) {
         try{
@@ -60,6 +78,10 @@ public class ViewProxy implements ModelListener{
         }
     }
 
+    /**
+     * Tells client to reset board
+     * @param turn : clients trun
+     */
     @Override
     public void clearBoard(boolean turn) {
         try{
@@ -72,6 +94,9 @@ public class ViewProxy implements ModelListener{
         }
     }
 
+    /**
+     * Tells client to change turns
+     */
     @Override
     public void changeTurn() {
         try{
@@ -83,6 +108,10 @@ public class ViewProxy implements ModelListener{
         }
     }
 
+    /**
+     * Tells the client who they lost to
+     * @param name : name of person who won
+     */
     public void lose(String name){
         try{
             out.write('L');
@@ -94,6 +123,9 @@ public class ViewProxy implements ModelListener{
         }
     }
 
+    /**
+     * Tells the client they won
+     */
     public void win(){
         try{
             out.write('W');
@@ -104,6 +136,9 @@ public class ViewProxy implements ModelListener{
         }
     }
 
+    /**
+     * Tells the client to exit
+     */
     public void quit(){
         try{
             out.write('Q');
@@ -114,6 +149,9 @@ public class ViewProxy implements ModelListener{
         }
     }
 
+    /**
+     * Reads in bytes from client and changes the model
+     */
     private class ReaderThread extends Thread{
         @Override
         public void run() {

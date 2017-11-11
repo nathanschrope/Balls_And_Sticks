@@ -2,26 +2,48 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+/**
+ * Backend of Game, does all commputations for Bns Server, to be run with multiple Clients
+ *
+ * __author__ = Nathan Schrope @nks9452
+ */
 public class BnsModel implements ViewListener{
-    /**
-     * Number of balls.
-     */
-    public static final int N_BALLS = 9;
 
     /**
-     * Number of sticks.
+     * The main board
      */
-    public static final int N_STICKS = 12;
-
     private JBoard board = new JBoard();
+    /**
+     * All listeners in this session
+     */
     private LinkedList<ModelListener> listeners = new LinkedList<>();
+    /**
+     * Names of players in this session
+     */
     private LinkedList<String> names = new LinkedList<>();
+    /**
+     * Current number of Clients in this session
+     */
     private int numberOfClients = 0;
+    /**
+     * Number of balls left while playing the game
+     */
     private int ballsLeft;
+    /**
+     * first player turn?
+     */
     private boolean first;
 
+    /**
+     * default constructor
+     */
     public BnsModel(){ }
 
+    /**
+     * Adds client to session
+     * @param modelListener : client to be added
+     * @param name : player name
+     */
     public synchronized void addBoardListener(ModelListener modelListener,String name){
         listeners.add(modelListener);
         names.add(name);
@@ -32,6 +54,10 @@ public class BnsModel implements ViewListener{
 
     }
 
+    /**
+     * Makes changes to board and alerts the clients connected to this session
+     * @param x : stick number
+     */
     @Override
     public synchronized void stickClicked(int x) {
         board.setStickVisible(x,false);
@@ -44,6 +70,10 @@ public class BnsModel implements ViewListener{
         }
     }
 
+    /**
+     * Makes changes to board. Takes sticks connected to ball out as well. Alerts clients connected to this session
+     * @param x : ball number
+     */
     @Override
     public synchronized void ballClicked(int x) {
         board.setBallVisible(x,false);
@@ -118,14 +148,17 @@ public class BnsModel implements ViewListener{
 
     }
 
+    /**
+     * Sets all balls and sticks visible and alerts all clients connected to this session
+     */
     @Override
     public synchronized void newBoard() {
-        ballsLeft = N_BALLS;
+        ballsLeft = JBoard.N_BALLS;
         first = true;
-        for(int balls = 0; balls < N_BALLS;balls++){
+        for(int balls = 0; balls < JBoard.N_BALLS;balls++){
             board.setBallVisible(balls,true);
         }
-        for(int sticks = 0; sticks < N_STICKS;sticks++){
+        for(int sticks = 0; sticks < JBoard.N_STICKS;sticks++){
             board.setStickVisible(sticks,true);
         }
 
@@ -134,9 +167,18 @@ public class BnsModel implements ViewListener{
 
     }
 
+    /**
+     * does not need to do anything in this class
+     * shouldn't be called
+     * @param name : player name
+     * @param proxy : client
+     */
     @Override
     public synchronized void join(String name, ViewProxy proxy) { }
 
+    /**
+     * Closes session and alerts clients to close
+     */
     public synchronized void quit(){
         for(ModelListener temp: listeners){
             temp.quit();
@@ -144,10 +186,18 @@ public class BnsModel implements ViewListener{
 
     }
 
+    /**
+     * returns the number of clients
+     * @return
+     */
     public int getNumberOfClients() {
         return numberOfClients;
     }
 
+    /**
+     * Checks end game conditions
+     * Alerts clients if game is over
+     */
     public void checkEnd(){
         if(ballsLeft == 0){
             if(first){
