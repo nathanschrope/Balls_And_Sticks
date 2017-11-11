@@ -117,18 +117,19 @@ public class BnsUI
      * @param turn : clients turn?
      */
     public void clearBoard(boolean turn){
+        this.turn = turn;
         for(int x = 0; x < JBoard.N_BALLS; x++){
             board.setBallVisible(x,true);
         }
         for(int x = 0; x < JBoard.N_STICKS; x++){
             board.setStickVisible(x,true);
         }
-        this.turn = turn;
         if(turn){
             board.setBoardListener(viewListener);
             messageField.setText("Your turn");
         }else{
             messageField.setText(otherPlayer + "'s turn");
+            board.setBoardListener(null);
         }
         newGameButton.addActionListener(new ActionListener() {
             @Override
@@ -157,6 +158,7 @@ public class BnsUI
     @Override
     public void lose() {
         messageField.setText(otherPlayer + " wins!");
+
     }
 
     /**
@@ -222,7 +224,7 @@ public class BnsUI
             messageField.setText("Your turn");
         }else{
             board.setBoardListener(null);
-            messageField.setText(otherPlayer + " turn");
+            messageField.setText(otherPlayer + "'s turn");
         }
     }
 }

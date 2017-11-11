@@ -156,15 +156,14 @@ public class BnsModel implements ViewListener{
     public synchronized void newBoard() {
         ballsLeft = JBoard.N_BALLS;
         first = true;
+        listeners.get(0).clearBoard(true);
+        listeners.get(1).clearBoard(false);
         for(int balls = 0; balls < JBoard.N_BALLS;balls++){
             board.setBallVisible(balls,true);
         }
         for(int sticks = 0; sticks < JBoard.N_STICKS;sticks++){
             board.setStickVisible(sticks,true);
         }
-
-        listeners.get(0).clearBoard(true);
-        listeners.get(1).clearBoard(false);
 
     }
 
