@@ -10,10 +10,6 @@ import java.util.LinkedList;
 public class BnsModel implements ViewListener{
 
     /**
-     * The main board
-     */
-    private JBoard board = new JBoard();
-    /**
      * All listeners in this session
      */
     private LinkedList<ModelListener> listeners = new LinkedList<>();
@@ -61,7 +57,6 @@ public class BnsModel implements ViewListener{
      */
     @Override
     public synchronized void stickClicked(int x) {
-        board.setStickVisible(x,false);
         Iterator<ModelListener> iter = listeners.iterator();
         while(iter.hasNext()){
             ModelListener listener = iter.next();
@@ -77,7 +72,6 @@ public class BnsModel implements ViewListener{
      */
     @Override
     public synchronized void ballClicked(int x) {
-        board.setBallVisible(x,false);
         Iterator<ModelListener> iter = listeners.iterator();
         while(iter.hasNext()){
             ModelListener listener = iter.next();
@@ -136,7 +130,6 @@ public class BnsModel implements ViewListener{
         }
 
         for(int stick:sticks){
-            board.setStickVisible(stick,false);
             Iterator<ModelListener> iterator = listeners.iterator();
             while(iterator.hasNext()){
                 ModelListener temp = iterator.next();
@@ -158,12 +151,6 @@ public class BnsModel implements ViewListener{
         first = true;
         listeners.get(0).clearBoard(true);
         listeners.get(1).clearBoard(false);
-        for(int balls = 0; balls < JBoard.N_BALLS;balls++){
-            board.setBallVisible(balls,true);
-        }
-        for(int sticks = 0; sticks < JBoard.N_STICKS;sticks++){
-            board.setStickVisible(sticks,true);
-        }
 
     }
 
@@ -189,7 +176,7 @@ public class BnsModel implements ViewListener{
      * returns the number of clients
      * @return
      */
-    public int getNumberOfClients() {
+    public synchronized int getNumberOfClients() {
         return numberOfClients;
     }
 
@@ -197,7 +184,7 @@ public class BnsModel implements ViewListener{
      * Checks end game conditions
      * Alerts clients if game is over
      */
-    public void checkEnd(){
+    public synchronized void checkEnd(){
         if(ballsLeft == 0){
             if(first){
                 listeners.get(1).win();
@@ -209,7 +196,7 @@ public class BnsModel implements ViewListener{
         }
     }
 
-    private void start(){
+    private synchronized void start(){
         listeners.get(0).start(names.get(1));
         listeners.get(1).start(names.get(0));
     }

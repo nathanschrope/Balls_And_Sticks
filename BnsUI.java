@@ -80,6 +80,8 @@ public class BnsUI
                  viewListener.quit();
             }
         });
+        newGameButton.setEnabled(false);
+        messageField.setText("Waiting for partner");
     }
 
     //Nathan Schrope added
@@ -150,6 +152,7 @@ public class BnsUI
     @Override
     public void start(String name) {
         otherPlayer = name;
+        newGameButton.setEnabled(true);
     }
 
     /**

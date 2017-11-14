@@ -155,6 +155,7 @@ public class ModelProxy implements ViewListener {
                         case 'I':
                             name = in.readUTF();
                             modelListener.start(name);
+                            break;
                         default:
                             System.out.println("Bad Message");
                             break;
