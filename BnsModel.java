@@ -30,10 +30,31 @@ public class BnsModel implements ViewListener{
      */
     private boolean first;
 
+    public ArrayList<ArrayList<Integer>> ballAndSticks = new ArrayList<>();
+
     /**
      * default constructor
      */
-    public BnsModel(){ }
+    public BnsModel(){
+        ballAndSticks.add(new ArrayList<>());
+        ballAndSticks.get(0).add(0);    ballAndSticks.get(0).add(6);
+        ballAndSticks.add(new ArrayList<>());
+        ballAndSticks.get(1).add(0);    ballAndSticks.get(1).add(1);    ballAndSticks.get(1).add(8);
+        ballAndSticks.add(new ArrayList<>());
+        ballAndSticks.get(2).add(1);    ballAndSticks.get(2).add(10);
+        ballAndSticks.add(new ArrayList<>());
+        ballAndSticks.get(3).add(2);    ballAndSticks.get(3).add(6);    ballAndSticks.get(3).add(7);
+        ballAndSticks.add(new ArrayList<>());
+        ballAndSticks.get(4).add(2);    ballAndSticks.get(4).add(3);    ballAndSticks.get(4).add(8);    ballAndSticks.get(4).add(9);
+        ballAndSticks.add(new ArrayList<>());
+        ballAndSticks.get(5).add(3);    ballAndSticks.get(5).add(10);    ballAndSticks.get(5).add(11);
+        ballAndSticks.add(new ArrayList<>());
+        ballAndSticks.get(6).add(4);    ballAndSticks.get(6).add(7);
+        ballAndSticks.add(new ArrayList<>());
+        ballAndSticks.get(7).add(4);    ballAndSticks.get(7).add(5);    ballAndSticks.get(7).add(9);
+        ballAndSticks.add(new ArrayList<>());
+        ballAndSticks.get(8).add(5);    ballAndSticks.get(8).add(11);
+    }
 
     /**
      * Adds client to session
@@ -80,56 +101,7 @@ public class BnsModel implements ViewListener{
             first = !first;
         }
 
-        ArrayList<Integer> sticks = new ArrayList<>();
-
-        switch(x){
-            case 0:
-                sticks.add(0);
-                sticks.add(6);
-                break;
-            case 1:
-                sticks.add(0);
-                sticks.add(1);
-                sticks.add(8);
-                break;
-            case 2:
-                sticks.add(1);
-                sticks.add(10);
-                break;
-            case 3:
-                sticks.add(2);
-                sticks.add(6);
-                sticks.add(7);
-                break;
-            case 4:
-                sticks.add(2);
-                sticks.add(3);
-                sticks.add(8);
-                sticks.add(9);
-                break;
-            case 5:
-                sticks.add(3);
-                sticks.add(10);
-                sticks.add(11);
-                break;
-            case 6:
-                sticks.add(7);
-                sticks.add(4);
-                break;
-            case 7:
-                sticks.add(4);
-                sticks.add(5);
-                sticks.add(9);
-                break;
-            case 8:
-                sticks.add(5);
-                sticks.add(11);
-            default:
-                System.out.println("Not a ball Number");
-                break;
-        }
-
-        for(int stick:sticks){
+        for(int stick:ballAndSticks.get(x)){
             Iterator<ModelListener> iterator = listeners.iterator();
             while(iterator.hasNext()){
                 ModelListener temp = iterator.next();
