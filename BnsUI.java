@@ -119,26 +119,17 @@ public class BnsUI
      * @param turn : clients turn?
      */
     public void clearBoard(boolean turn){
-        this.turn = turn;
-        for(int x = 0; x < JBoard.N_BALLS; x++){
-            board.setBallVisible(x,true);
-        }
-        for(int x = 0; x < JBoard.N_STICKS; x++){
-            board.setStickVisible(x,true);
-        }
-        if(turn){
-            board.setBoardListener(viewListener);
-            messageField.setText("Your turn");
-        }else{
-            messageField.setText(otherPlayer + "'s turn");
-            board.setBoardListener(null);
-        }
         newGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 viewListener.newBoard();
             }
         });
+        if(turn){
+            messageField.setText("Your turn");
+        }else{
+            messageField.setText(otherPlayer + "'s turn");
+        }
     }
 
     /**
@@ -199,12 +190,13 @@ public class BnsUI
      * @param session : name
      * @return a working view
      */
-    public static BnsUI create(final String session){
+    public static BnsUI create(final String session,JBoard board){
         final BnsUIRef ref = new BnsUIRef();
         onSwingThreadDo(new Runnable() {
             @Override
             public void run() {
                 ref.ui = new BnsUI(session);
+                ref.ui.setBoard(board);
             }
         });
         return ref.ui;
@@ -217,17 +209,16 @@ public class BnsUI
         public BnsUI ui;
     }
 
-    /**
-     * changes turn
-     */
-    public void changeTurn(){
-        turn = !turn;
-        if(turn){
-            board.setBoardListener(viewListener);
-            messageField.setText("Your turn");
-        }else{
-            board.setBoardListener(null);
+    private void setBoard(JBoard board){
+        this.board = board;
+    }
+
+    @Override
+    public void changeTurn() {
+        if(messageField.getText() == "Your turn"){
             messageField.setText(otherPlayer + "'s turn");
+        }else{
+            messageField.setText("Your turn");
         }
     }
 }
