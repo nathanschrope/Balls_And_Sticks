@@ -13,6 +13,7 @@ public class ViewProxy implements ModelListener{
     private DataOutputStream out;
     private DataInputStream in;
     private ViewListener viewListener;
+    private boolean isAlive = true;
 
     /**
      * Only Constructor
@@ -101,6 +102,7 @@ public class ViewProxy implements ModelListener{
      */
     public void quit(){
         try{
+            isAlive = false;
             out.write('Q');
             out.flush();
             out.close();
@@ -169,4 +171,11 @@ public class ViewProxy implements ModelListener{
         }
     }
 
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+    public void exit(){
+        viewListener.quit();
+    }
 }

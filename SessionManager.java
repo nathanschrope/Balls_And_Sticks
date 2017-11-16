@@ -7,6 +7,7 @@ public class SessionManager implements ViewListener {
      * List of current sessions
      */
     private BnsModel curModel = null;
+    private ViewProxy viewProxy = null;
 
     private int numClients = 0;
 
@@ -24,12 +25,24 @@ public class SessionManager implements ViewListener {
     public synchronized void join(String name, ViewProxy view) {
         if(curModel == null || numClients >= 2){
             curModel = new BnsModel();
+            viewProxy = view;
             numClients = 1;
+            curModel.addBoardListener(view,name);
+            view.setViewListener(curModel);
         }else{
             numClients++;
+            if(viewProxy.isAlive()) {
+                curModel.addBoardListener(view, name);
+                view.setViewListener(curModel);
+            }else{
+                viewProxy.exit();
+                curModel = new BnsModel();
+                viewProxy = view;
+                numClients = 1;
+                curModel.addBoardListener(view,name);
+                view.setViewListener(curModel);
+            }
         }
-        curModel.addBoardListener(view,name);
-        view.setViewListener(curModel);
     }
 
     /**
@@ -53,10 +66,8 @@ public class SessionManager implements ViewListener {
     public void stickClicked(int x, ModelListener ml) { }
 
     /**
-     * does nothing
+     * Only does something when a player is waiting for a partner and closes
      */
     @Override
-    public void quit() {
-
-    }
+    public void quit() { }
 }

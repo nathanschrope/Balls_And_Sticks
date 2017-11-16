@@ -143,7 +143,6 @@ public class BnsModel implements ViewListener{
             temp.quit();
         }
         listeners.clear();
-
     }
 
     private synchronized void changeTurn(){
