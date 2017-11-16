@@ -22,12 +22,10 @@ public class Bns
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress(host, port));
 
-            BnsModelClone model = new BnsModelClone();
-            BnsUI view = BnsUI.create (session,model.getBoard());
+            BnsUI view = BnsUI.create (session);
             ModelProxy proxy = new ModelProxy (socket);
-            model.setModelListener(view);
             view.setViewListener (proxy);
-            proxy.setBoardListener (model);
+            proxy.setModelListener (view);
             proxy.join(session,null);
         }catch(IOException e){
             System.out.println("Socket Error");

@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 /**
  * Controls what game clients connect to. Clients are initially connected here only to be connected to a session
  */
@@ -20,18 +18,18 @@ public class SessionManager implements ViewListener {
     /**
      * Gives a client a session to join
      * @param name : player name
-     * @param proxy : client
+     * @param view : client
      */
     @Override
-    public synchronized void join(String name, ViewProxy proxy) {
+    public synchronized void join(String name, ViewProxy view) {
         if(curModel == null || numClients >= 2){
             curModel = new BnsModel();
             numClients = 1;
         }else{
             numClients++;
         }
-        curModel.addBoardListener(proxy,name);
-        proxy.setViewListener(curModel);
+        curModel.addBoardListener(view,name);
+        view.setViewListener(curModel);
     }
 
     /**
@@ -45,14 +43,14 @@ public class SessionManager implements ViewListener {
      * @param x : ball number
      */
     @Override
-    public void ballClicked(int x) { }
+    public void ballClicked(int x, ModelListener ml) { }
 
     /**
      * does nothing
      * @param x : stick number
      */
     @Override
-    public void stickClicked(int x) { }
+    public void stickClicked(int x, ModelListener ml) { }
 
     /**
      * does nothing

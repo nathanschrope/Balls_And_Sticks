@@ -30,11 +30,11 @@ public class ModelProxy implements ViewListener {
     }
 
     /**
-     * Sets the board listener
-     * @param bl : board listener to be change to
+     * Sets the model listener
+     * @param ml : model listener to be change to
      */
-    public void setBoardListener(ModelListener bl){
-        this.modelListener = bl;
+    public void setModelListener(ModelListener ml){
+        this.modelListener = ml;
         new ReaderThread() .start();
     }
 
@@ -43,7 +43,7 @@ public class ModelProxy implements ViewListener {
      * @param x : stick number
      */
     @Override
-    public void stickClicked(int x) {
+    public void stickClicked(int x, ModelListener ml) {
         try{
             out.writeByte('S');
             out.writeByte(x);
@@ -59,7 +59,7 @@ public class ModelProxy implements ViewListener {
      * @param x : ball number
      */
     @Override
-    public void ballClicked(int x) {
+    public void ballClicked(int x,ModelListener ml) {
         try{
             out.writeByte('B');
             out.writeByte(x);
@@ -87,10 +87,9 @@ public class ModelProxy implements ViewListener {
     /**
      * sends message to join
      * @param name : player name
-     * @param proxy : client
      */
     @Override
-    public void join(String name, ViewProxy proxy) {
+    public void join(String name, ViewProxy view) {
         try {
             out.writeByte('J');
             out.writeUTF(name);
@@ -122,39 +121,31 @@ public class ModelProxy implements ViewListener {
             try{
                 for(;;){
                     int x;
-                    boolean turn;
+                    boolean bool;
+                    String string;
                     byte b = in.readByte();
-                    String name;
                     switch(b){
                         case 'S':
                             x = in.readByte();
-                            modelListener.stickClicked(x);
+                            bool = in.readBoolean();
+                            modelListener.stickChange(x,bool);
                             break;
                         case 'B':
                             x = in.readByte();
-                            modelListener.ballClicked(x);
+                            bool = in.readBoolean();
+                            modelListener.ballChange(x,bool);
                             break;
-                        case 'C':
-                            turn= in.readBoolean();
-                            modelListener.clearBoard(turn);
+                        case 'I':
+                            modelListener.start();
                             break;
-                        case 'T':
-                            modelListener.changeTurn();
-                            break;
-                        case 'L':
-                            modelListener.lose();
-                            break;
-                        case 'W':
-                            modelListener.win();
+                        case 'M':
+                            string = in.readUTF();
+                            modelListener.changeMessage(string);
                             break;
                         case 'Q':
                             modelListener.quit();
                             in.close();
                             out.close();
-                            break;
-                        case 'I':
-                            name = in.readUTF();
-                            modelListener.start(name);
                             break;
                         default:
                             System.out.println("Bad Message");

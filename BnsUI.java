@@ -3,14 +3,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Color;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 /**
  * Class BnsUI provides the graphical user interface for the game of Balls and
@@ -34,10 +27,6 @@ public class BnsUI
     private JTextField messageField;
     private JButton newGameButton;
     private ViewListener viewListener;
-    //Nathan Schrope added
-    //represents if it is their turn or not.
-    private Boolean turn = false;
-    private String otherPlayer;
 
 // Hidden constructors.
 
@@ -77,30 +66,33 @@ public class BnsUI
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                 viewListener.quit();
+                 sendQuit();
             }
         });
         newGameButton.setEnabled(false);
+        newGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewListener.newBoard();
+            }
+        });
         messageField.setText("Waiting for partner");
     }
 
     //Nathan Schrope added
 
     /**
-     * returns the board
-     * @return board
-     */
-    public JBoard getBoard() {
-        return board;
-    }
-
-    /**
      * Makes the i stick disappear
      * @param  i  Stick index (0..11).
      */
     @Override
-    public void stickClicked(int i) {
-        board.setStickVisible(i,false);
+    public void stickChange(int i, boolean visible) {
+        onSwingThreadDo(new Runnable() {
+            @Override
+            public void run() {
+                board.setStickVisible(i,visible);
+            }
+        });
     }
 
     /**
@@ -108,66 +100,63 @@ public class BnsUI
      * @param  i  Ball index (0..8).
      */
     @Override
-    public void ballClicked(int i) {
-        board.setBallVisible(i,false);
-    }
-
-    /**
-     * Makes all balls and sticks visible and sets turn.
-     * Activates new game button
-     * Resets game over text
-     * @param turn : clients turn?
-     */
-    public void clearBoard(boolean turn){
-        newGameButton.addActionListener(new ActionListener() {
+    public void ballChange(int i, boolean visible) {
+        onSwingThreadDo(new Runnable() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                viewListener.newBoard();
+            public void run() {
+                board.setBallVisible(i,visible);
             }
         });
-        if(turn){
-            messageField.setText("Your turn");
-        }else{
-            messageField.setText(otherPlayer + "'s turn");
-        }
     }
 
     /**
      * Throws out frame. Exits
      */
     public void quit(){
-        frame.dispose();
-        System.exit(0);
+        onSwingThreadDo(new Runnable() {
+            @Override
+            public void run() {
+                frame.dispose();
+                System.exit(0);
+            }
+        });
     }
 
     @Override
-    public void start(String name) {
-        otherPlayer = name;
-        newGameButton.setEnabled(true);
+    public void start() {
+        onSwingThreadDo(new Runnable() {
+            @Override
+            public void run() {
+                newGameButton.setEnabled(true);
+            }
+        });
     }
 
-    /**
-     * Sets text on screen to other player winning
-     */
     @Override
-    public void lose() {
-        messageField.setText(otherPlayer + " wins!");
-
-    }
-
-    /**
-     * Sets text on screen to this player winning
-     */
-    @Override
-    public void win() {
-        messageField.setText("You win!");
+    public void changeMessage(String name) {
+        onSwingThreadDo(new Runnable() {
+            @Override
+            public void run() {
+                messageField.setText(name);
+            }
+        });
     }
 
     public void setViewListener(final ViewListener vl) {
         onSwingThreadDo(new Runnable() {
             public void run() {
                 BnsUI.this.viewListener = vl;
-                board.setBoardListener(null);
+                board.setBoardListener(new BoardListener() {
+                    @Override
+                    public void ballClicked(int i) {
+                        viewListener.ballClicked(i,null);
+                    }
+
+                    @Override
+                    public void stickClicked(int i) {
+                        viewListener.stickClicked(i,null);
+                    }
+                });
             }
         });
     }
@@ -190,13 +179,12 @@ public class BnsUI
      * @param session : name
      * @return a working view
      */
-    public static BnsUI create(final String session,JBoard board){
+    public static BnsUI create(final String session){
         final BnsUIRef ref = new BnsUIRef();
         onSwingThreadDo(new Runnable() {
             @Override
             public void run() {
                 ref.ui = new BnsUI(session);
-                ref.ui.setBoard(board);
             }
         });
         return ref.ui;
@@ -213,12 +201,7 @@ public class BnsUI
         this.board = board;
     }
 
-    @Override
-    public void changeTurn() {
-        if(messageField.getText() == "Your turn"){
-            messageField.setText(otherPlayer + "'s turn");
-        }else{
-            messageField.setText("Your turn");
-        }
+    private void sendQuit(){
+        viewListener.quit();
     }
 }

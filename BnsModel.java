@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -66,7 +65,8 @@ public class BnsModel implements ViewListener{
         names.add(name);
         numberOfClients++;
         if(numberOfClients == 2){
-            start();
+            listeners.get(0).start();
+            listeners.get(1).start();
             newBoard();
         }
 
@@ -76,62 +76,64 @@ public class BnsModel implements ViewListener{
      * Makes changes to board and alerts the clients connected to this session
      * @param x : stick number
      */
-    @Override
-    public synchronized void stickClicked(int x) {
-        Iterator<ModelListener> iter = listeners.iterator();
-        while(iter.hasNext()){
-            ModelListener listener = iter.next();
-            listener.stickClicked(x);
-            listener.changeTurn();
-            first = !first;
+    public synchronized void stickClicked(int x, ModelListener ml) {
+        if((first && ml == listeners.get(0)) || (!first && ml == listeners.get(1))){
+            listeners.get(0).stickChange(x,false);
+            listeners.get(1).stickChange(x,false);
+            changeTurn();
         }
     }
 
     /**
-     * Makes changes to board. Takes sticks connected to ball out as well. Alerts clients connected to this session
+     * Takes sticks connected to ball out as well. Alerts clients connected to this session
      * @param x : ball number
      */
-    @Override
-    public synchronized void ballClicked(int x) {
-        Iterator<ModelListener> iter = listeners.iterator();
-        while(iter.hasNext()){
-            ModelListener listener = iter.next();
-            listener.ballClicked(x);
-            listener.changeTurn();
-            first = !first;
-        }
-
-        for(int stick:ballAndSticks.get(x)){
-            Iterator<ModelListener> iterator = listeners.iterator();
-            while(iterator.hasNext()){
-                ModelListener temp = iterator.next();
-                temp.stickClicked(stick);
+    public synchronized void ballClicked(int x, ModelListener ml) {
+        if((first && ml == listeners.get(0)) || (!first && ml == listeners.get(1))){
+            ballsLeft--;
+            listeners.get(0).ballChange(x,false);
+            listeners.get(1).ballChange(x,false);
+            for(int temp: ballAndSticks.get(x)){
+                listeners.get(0).stickChange(temp,false);
+                listeners.get(1).stickChange(temp,false);
+            }
+            if(ballsLeft == 0){
+                if(!first){
+                    listeners.get(0).changeMessage("You win!");
+                    listeners.get(1).changeMessage(names.get(0) + " wins!");
+                }else{
+                    listeners.get(0).changeMessage(names.get(1) + " wins!");
+                    listeners.get(1).changeMessage("You win!");
+                }
+            }else{
+                changeTurn();
             }
         }
-
-        ballsLeft--;
-        checkEnd();
-
     }
 
     /**
      * Sets all balls and sticks visible and alerts all clients connected to this session
      */
-    @Override
     public synchronized void newBoard() {
         ballsLeft = JBoard.N_BALLS;
+        for(int x = 0; x < JBoard.N_BALLS; x++){
+            listeners.get(0).ballChange(x,true);
+            listeners.get(1).ballChange(x,true);
+        }
+        for(int x = 0; x < JBoard.N_STICKS; x++){
+            listeners.get(0).stickChange(x,true);
+            listeners.get(1).stickChange(x,true);
+        }
+        listeners.get(0).changeMessage("Your turn");
+        listeners.get(1).changeMessage(names.get(0) + "'s turn");
         first = true;
-        listeners.get(0).clearBoard(true);
-        listeners.get(1).clearBoard(false);
-
     }
 
     /**
      * @param name : player name
-     * @param proxy : client
      */
     @Override
-    public synchronized void join(String name, ViewProxy proxy) { }
+    public synchronized void join(String name, ViewProxy view) { }
 
     /**
      * Closes session and alerts clients to close
@@ -144,32 +146,14 @@ public class BnsModel implements ViewListener{
 
     }
 
-    /**
-     * returns the number of clients
-     * @return
-     */
-    public synchronized int getNumberOfClients() {
-        return numberOfClients;
-    }
-
-    /**
-     * Checks end game conditions
-     * Alerts clients if game is over
-     */
-    public synchronized void checkEnd(){
-        if(ballsLeft == 0){
-            if(first){
-                listeners.get(1).win();
-                listeners.get(0).lose();
-            }else{
-                listeners.get(0).win();
-                listeners.get(1).lose();
-            }
+    private synchronized void changeTurn(){
+        first = !first;
+        if(first){
+            listeners.get(0).changeMessage("Your turn");
+            listeners.get(1).changeMessage(names.get(0) + "'s turn");
+        }else{
+            listeners.get(0).changeMessage(names.get(1) + "'s turn");
+            listeners.get(1).changeMessage("Your turn");
         }
-    }
-
-    private synchronized void start(){
-        listeners.get(0).start(names.get(1));
-        listeners.get(1).start(names.get(0));
     }
 }

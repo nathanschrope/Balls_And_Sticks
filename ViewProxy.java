@@ -51,10 +51,11 @@ public class ViewProxy implements ModelListener{
      * @param  i  Stick index (0..11).
      */
     @Override
-    public void stickClicked(int i) {
+    public void stickChange(int i, boolean visible) {
         try {
             out.writeByte('S');
             out.writeByte(i);
+            out.writeBoolean(visible);
             out.flush();
         }catch(IOException e){
             System.out.println("Printer Error");
@@ -67,26 +68,11 @@ public class ViewProxy implements ModelListener{
      * @param  i  Ball index (0..8).
      */
     @Override
-    public void ballClicked(int i) {
+    public void ballChange(int i, boolean visible) {
         try{
             out.writeByte('B');
             out.writeByte(i);
-            out.flush();
-        }catch(IOException e){
-            System.out.println("Printer Error");
-            System.exit(1);
-        }
-    }
-
-    /**
-     * Tells client to reset board
-     * @param turn : clients trun
-     */
-    @Override
-    public void clearBoard(boolean turn) {
-        try{
-            out.writeByte('C');
-            out.writeBoolean(turn);
+            out.writeBoolean(visible);
             out.flush();
         }catch(IOException e){
             System.out.println("Printer Error");
@@ -98,9 +84,10 @@ public class ViewProxy implements ModelListener{
      * Tells client to change turns
      */
     @Override
-    public void changeTurn() {
+    public void changeMessage(String name) {
         try{
-            out.write('T');
+            out.write('M');
+            out.writeUTF(name);
             out.flush();
         }catch(IOException e){
             System.out.println("Printer Error");
@@ -108,31 +95,6 @@ public class ViewProxy implements ModelListener{
         }
     }
 
-    /**
-     * Tells the client who they lost to
-     */
-    public void lose(){
-        try{
-            out.write('L');
-            out.flush();
-        }catch(IOException e){
-            System.out.println("Printer Error");
-            System.exit(1);
-        }
-    }
-
-    /**
-     * Tells the client they won
-     */
-    public void win(){
-        try{
-            out.write('W');
-            out.flush();
-        }catch(IOException e){
-            System.out.println("Printer Error");
-            System.exit(1);
-        }
-    }
 
     /**
      * Tells the client to exit
@@ -150,10 +112,9 @@ public class ViewProxy implements ModelListener{
     }
 
     @Override
-    public void start(String name) {
+    public void start() {
         try{
             out.write('I');
-            out.writeUTF(name);
             out.flush();
         }catch(IOException e){
             System.out.println("Printer Error");
@@ -179,11 +140,11 @@ public class ViewProxy implements ModelListener{
                             break;
                         case 'B':
                             x = in.readByte();
-                            viewListener.ballClicked(x);
+                            viewListener.ballClicked(x,ViewProxy.this);
                             break;
                         case 'S':
                             x = in.readByte();
-                            viewListener.stickClicked(x);
+                            viewListener.stickClicked(x,ViewProxy.this);
                             break;
                         case 'C':
                             viewListener.newBoard();
