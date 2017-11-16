@@ -41,6 +41,7 @@ public class ModelProxy implements ViewListener {
     /**
      * Sends a message to the server that a stick was clicked
      * @param x : stick number
+     * @param ml : nothing for this instance
      */
     @Override
     public void stickClicked(int x, ModelListener ml) {
@@ -57,6 +58,7 @@ public class ModelProxy implements ViewListener {
     /**
      * Sends a message to the server saying a ball was clicked
      * @param x : ball number
+     * @param ml : not used in this instance
      */
     @Override
     public void ballClicked(int x,ModelListener ml) {
@@ -85,8 +87,9 @@ public class ModelProxy implements ViewListener {
     }
 
     /**
-     * sends message to join
+     * Sends a message to join
      * @param name : player name
+     * @param view : not used in this instance
      */
     @Override
     public void join(String name, ViewProxy view) {

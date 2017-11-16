@@ -13,6 +13,9 @@ public class ViewProxy implements ModelListener{
     private DataOutputStream out;
     private DataInputStream in;
     private ViewListener viewListener;
+    /**
+     * A boolean that is true when the program is running fine and false when exited.
+     */
     private boolean isAlive = true;
 
     /**
@@ -50,6 +53,7 @@ public class ViewProxy implements ModelListener{
     /**
      * Tells the client to remove stick
      * @param  i  Stick index (0..11).
+     * @param visible : whether or not the stick of index i will be visible or not
      */
     @Override
     public void stickChange(int i, boolean visible) {
@@ -66,7 +70,8 @@ public class ViewProxy implements ModelListener{
 
     /**
      * Tells client to remove ball
-     * @param  i  Ball index (0..8).
+     * @param  i : Ball index (0..8).
+     * @param visible :  whether or not the ball of index i will be visible or not
      */
     @Override
     public void ballChange(int i, boolean visible) {
@@ -82,7 +87,8 @@ public class ViewProxy implements ModelListener{
     }
 
     /**
-     * Tells client to change turns
+     * Tells client to change to the given message
+     * @param name : the new message to be changed to
      */
     @Override
     public void changeMessage(String name) {
@@ -113,6 +119,9 @@ public class ViewProxy implements ModelListener{
         }
     }
 
+    /**
+     * Sends a message for client to set up game
+     */
     @Override
     public void start() {
         try{
@@ -171,10 +180,17 @@ public class ViewProxy implements ModelListener{
         }
     }
 
+    /**
+     * Returns isAlive
+     * @return
+     */
     public boolean isAlive() {
         return isAlive;
     }
 
+    /**
+     * The session Manager can used this to shut down client when client exits before finding a partner
+     */
     public void exit(){
         viewListener.quit();
     }

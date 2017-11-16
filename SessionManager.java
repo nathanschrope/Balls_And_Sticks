@@ -7,8 +7,14 @@ public class SessionManager implements ViewListener {
      * List of current sessions
      */
     private BnsModel curModel = null;
+    /**
+     * viewProxy already in the current model if there is one so far
+     */
     private ViewProxy viewProxy = null;
 
+    /**
+     * the number of clients in the model(session)
+     */
     private int numClients = 0;
 
     /**
@@ -53,20 +59,22 @@ public class SessionManager implements ViewListener {
 
     /**
      * does nothing
-     * @param x : ball number
+     * @param x
+     * @param ml
      */
     @Override
     public void ballClicked(int x, ModelListener ml) { }
 
     /**
      * does nothing
-     * @param x : stick number
+     * @param x
+     * @param ml
      */
     @Override
     public void stickClicked(int x, ModelListener ml) { }
 
     /**
-     * Only does something when a player is waiting for a partner and closes
+     * does nothing
      */
     @Override
     public void quit() { }

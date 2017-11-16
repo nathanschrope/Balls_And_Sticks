@@ -3,7 +3,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Color;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 /**
  * Class BnsUI provides the graphical user interface for the game of Balls and
@@ -122,6 +129,9 @@ public class BnsUI
         });
     }
 
+    /**
+     * Starts the game by enabling the new game button
+     */
     @Override
     public void start() {
         onSwingThreadDo(new Runnable() {
@@ -132,6 +142,10 @@ public class BnsUI
         });
     }
 
+    /**
+     * Changes message on view to given string
+     * @param name
+     */
     @Override
     public void changeMessage(String name) {
         onSwingThreadDo(new Runnable() {
@@ -142,6 +156,10 @@ public class BnsUI
         });
     }
 
+    /**
+     * Changes the viewListener to the given view listener
+     * @param vl
+     */
     public void setViewListener(final ViewListener vl) {
         onSwingThreadDo(new Runnable() {
             public void run() {
@@ -197,10 +215,9 @@ public class BnsUI
         public BnsUI ui;
     }
 
-    private void setBoard(JBoard board){
-        this.board = board;
-    }
-
+    /**
+     * Tells the viewlistener to send a quit message
+     */
     private void sendQuit(){
         viewListener.quit();
     }

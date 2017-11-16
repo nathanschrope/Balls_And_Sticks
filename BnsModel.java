@@ -130,6 +130,7 @@ public class BnsModel implements ViewListener{
     }
 
     /**
+     * is not sued
      * @param name : player name
      */
     @Override
@@ -145,6 +146,9 @@ public class BnsModel implements ViewListener{
         listeners.clear();
     }
 
+    /**
+     * Sends clients message to update view
+     */
     private synchronized void changeTurn(){
         first = !first;
         if(first){
