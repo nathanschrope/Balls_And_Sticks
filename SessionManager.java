@@ -8,7 +8,9 @@ public class SessionManager implements ViewListener {
     /**
      * List of current sessions
      */
-    private SessionList sessions = new SessionList();
+    private BnsModel curModel = null;
+
+    private int numClients = 0;
 
     /**
      * Default constructor
@@ -22,9 +24,14 @@ public class SessionManager implements ViewListener {
      */
     @Override
     public synchronized void join(String name, ViewProxy proxy) {
-        BnsModel model = sessions.getOpen();
-        model.addBoardListener(proxy,name);
-        proxy.setViewListener(model);
+        if(curModel == null || numClients >= 2){
+            curModel = new BnsModel();
+            numClients = 1;
+        }else{
+            numClients++;
+        }
+        curModel.addBoardListener(proxy,name);
+        proxy.setViewListener(curModel);
     }
 
     /**
@@ -54,26 +61,4 @@ public class SessionManager implements ViewListener {
     public void quit() {
 
     }
-
-    /**
-     * A specific Array List that holds Models
-     */
-    public class SessionList extends ArrayList<BnsModel>{
-
-        /**
-         * returns an non filled Model
-         * @return Model to be joined
-         */
-        public BnsModel getOpen(){
-            for(BnsModel temp:this){
-                if(temp.getNumberOfClients() < 2){
-                    return temp;
-                }
-            }
-            this.add(new BnsModel());
-            return this.get(this.size()-1);
-        }
-
-    }
-
 }

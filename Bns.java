@@ -21,10 +21,13 @@ public class Bns
         try {
             Socket socket = new Socket();
             socket.connect(new InetSocketAddress(host, port));
-            BnsUI view = BnsUI.create (session);
+
+            BnsModelClone model = new BnsModelClone();
+            BnsUI view = BnsUI.create (session,model.getBoard());
             ModelProxy proxy = new ModelProxy (socket);
+            model.setModelListener(view);
             view.setViewListener (proxy);
-            proxy.setBoardListener (view);
+            proxy.setBoardListener (model);
             proxy.join(session,null);
         }catch(IOException e){
             System.out.println("Socket Error");
